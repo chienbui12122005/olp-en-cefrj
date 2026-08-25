@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ms. Nga - Food Vocabulary & How much / How many</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f6f8fb;color:#1d2939}
+.wrap{max-width:860px;margin:auto;padding:18px 12px 50px}
+.hero,.card,.score{background:#fff;border:1px solid #e4e7ec;border-radius:18px}
+.hero{padding:20px;text-align:center}
+.hero h1{margin:0 0 8px;font-size:30px}
+.hero p{margin:5px;color:#667085}
+.progress-wrap{position:sticky;top:0;background:#f6f8fb;padding:10px 0;z-index:4}
+.track{height:9px;background:#e9edf5;border-radius:20px;overflow:hidden}
+#bar{height:100%;width:0;background:#175cd3;transition:.2s}
+#counter{font-size:13px;color:#667085;text-align:right;margin-top:5px}
+.section{font-size:19px;font-weight:700;margin:24px 3px 8px}
+.card{display:grid;grid-template-columns:105px 1fr;gap:14px;align-items:center;padding:15px;margin:10px 0}
+.emoji{font-size:66px;text-align:center}
+.num{font-size:12px;color:#667085;font-weight:bold}
+.q{font-size:17px;font-weight:700;line-height:1.4;margin:5px 0 10px}
+.opts{display:grid;gap:7px}
+label{border:1px solid #dfe3ea;border-radius:11px;padding:10px;display:flex;gap:8px;align-items:center;cursor:pointer}
+label:hover{border-color:#9bb8f5}
+.fb{font-size:14px;margin-top:8px;min-height:18px}
+.ok{border-color:#75c9a7!important;background:#f0fdf4}
+.bad{border-color:#f2a19a!important;background:#fff4f2}
+.actions{display:flex;gap:10px;justify-content:center;margin:22px 0;flex-wrap:wrap}
+button{padding:13px 18px;border:0;border-radius:11px;font-size:16px;font-weight:700;cursor:pointer}
+.primary{background:#175cd3;color:#fff}
+.secondary{background:#fff;border:1px solid #dfe3ea}
+.score{display:none;padding:20px;text-align:center}
+.score strong{font-size:34px;display:block;margin-bottom:6px}
+@media(max-width:560px){
+  .card{grid-template-columns:72px 1fr}
+  .emoji{font-size:50px}
+  .hero h1{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>FOOD QUIZ – MS. NGA</h1>
+    <p><b>Food Vocabulary + How much / How many</b></p>
+    <p>Level Movers · 15 câu · Chấm điểm tự động · Không cần tài khoản</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="track"><div id="bar"></div></div>
+    <div id="counter">0/15 câu đã làm</div>
+  </div>
+
+  <div id="root"></div>
+
+  <div class="actions">
+    <button class="primary" onclick="gradeQuiz()">Nộp bài & chấm điểm</button>
+    <button class="secondary" onclick="resetQuiz()">Làm lại</button>
+  </div>
+
+  <div id="score" class="score"></div>
+</div>
+
+<script>
+const quiz = [
+  {id:"q1",sec:"Phần 1 – Food Vocabulary",e:"🍞",q:"Which word means “bánh mì”?",o:["bread","rice","cheese","soup"],a:"bread"},
+  {id:"q2",e:"🧀",q:"Which food is made from milk?",o:["cheese","carrot","rice","bread"],a:"cheese"},
+  {id:"q3",e:"🥕",q:"Which one is a vegetable?",o:["carrot","pear","orange","grape"],a:"carrot"},
+  {id:"q4",e:"🍐",q:"Which one is a fruit?",o:["pear","sausage","butter","flour"],a:"pear"},
+  {id:"q5",e:"🥛",q:"Which drink comes from cows?",o:["milk","juice","lemonade","water"],a:"milk"},
+  {id:"q6",e:"🍚",q:"Which food is usually cooked in a pot and eaten with meals?",o:["rice","butter","sugar","flour"],a:"rice"},
+  {id:"q7",e:"🌭",q:"Which food is made with a sausage inside a long bread roll?",o:["hot dog","pancake","sandwich","salad"],a:"hot dog"},
+  {id:"q8",e:"🥞",q:"Which food is usually flat, round and cooked in a pan?",o:["pancake","burger","soup","pasta"],a:"pancake"},
+
+  {id:"q9",sec:"Phần 2 – How much / How many",e:"🍎",q:"How _____ apples are in the basket?",o:["much","many","some","any"],a:"many"},
+  {id:"q10",e:"🥛",q:"How _____ milk do you drink every day?",o:["many","much","some","a"],a:"much"},
+  {id:"q11",e:"🥔",q:"How _____ potatoes do we need for dinner?",o:["many","much","little","a lot"],a:"many"},
+  {id:"q12",e:"🍚",q:"How _____ rice is left in the bowl?",o:["many","much","few","an"],a:"much"},
+  {id:"q13",e:"🥚",q:"How _____ eggs do we need for the cake?",o:["much","many","little","any"],a:"many"},
+  {id:"q14",e:"🧈",q:"How _____ butter do you want on your bread?",o:["many","much","few","a"],a:"much"},
+  {id:"q15",e:"🍅",q:"How _____ tomatoes did your mum buy?",o:["much","many","little","an"],a:"many"}
+];
+
+function render(){
+  const root=document.getElementById("root");
+  root.innerHTML="";
+  quiz.forEach((x,i)=>{
+    if(x.sec){
+      const h=document.createElement("div");
+      h.className="section";
+      h.textContent=x.sec;
+      root.appendChild(h);
+    }
+    const card=document.createElement("div");
+    card.className="card";
+    card.id="card-"+x.id;
+
+    const em=document.createElement("div");
+    em.className="emoji";
+    em.textContent=x.e;
+
+    const body=document.createElement("div");
+    body.innerHTML=`<div class="num">Câu ${i+1} / ${quiz.length}</div><div class="q">${x.q}</div>`;
+
+    const opts=document.createElement("div");
+    opts.className="opts";
+    x.o.forEach((op,j)=>{
+      const lab=document.createElement("label");
+      lab.innerHTML=`<input type="radio" name="${x.id}" value="${op}"> <span>${String.fromCharCode(65+j)}. ${op}</span>`;
+      opts.appendChild(lab);
+    });
+    body.appendChild(opts);
+
+    const fb=document.createElement("div");
+    fb.className="fb";
+    fb.id="fb-"+x.id;
+    body.appendChild(fb);
+
+    card.append(em,body);
+    root.appendChild(card);
+  });
+
+  document.querySelectorAll('input[type="radio"]').forEach(el=>el.addEventListener("change",updateProgress));
+  restore();
+  updateProgress();
+}
+
+function getAnswer(q){
+  const el=document.querySelector(`input[name="${q.id}"]:checked`);
+  return el?el.value:"";
+}
+
+function updateProgress(){
+  let done=0, saved={};
+  quiz.forEach(q=>{
+    const v=getAnswer(q);
+    if(v) done++;
+    saved[q.id]=v;
+  });
+  localStorage.setItem("msnga_food_quiz_15",JSON.stringify(saved));
+  document.getElementById("bar").style.width=(done/quiz.length*100)+"%";
+  document.getElementById("counter").textContent=`${done}/${quiz.length} câu đã làm`;
+}
+
+function restore(){
+  try{
+    const saved=JSON.parse(localStorage.getItem("msnga_food_quiz_15")||"{}");
+    quiz.forEach(q=>{
+      if(!saved[q.id]) return;
+      const el=[...document.querySelectorAll(`input[name="${q.id}"]`)].find(x=>x.value===saved[q.id]);
+      if(el) el.checked=true;
+    });
+  }catch(e){}
+}
+
+function gradeQuiz(){
+  let correct=0, answered=0;
+  quiz.forEach(q=>{
+    const v=getAnswer(q);
+    const card=document.getElementById("card-"+q.id);
+    const fb=document.getElementById("fb-"+q.id);
+    card.classList.remove("ok","bad");
+
+    if(!v){
+      fb.textContent="Chưa trả lời.";
+      fb.style.color="#667085";
+      return;
+    }
+    answered++;
+    if(v===q.a){
+      correct++;
+      card.classList.add("ok");
+      fb.textContent="✓ Chính xác";
+      fb.style.color="#067647";
+    }else{
+      card.classList.add("bad");
+      fb.textContent="✗ Đáp án đúng: "+q.a;
+      fb.style.color="#b42318";
+    }
+  });
+
+  const pct=Math.round(correct/quiz.length*100);
+  const msg=pct>=90?"Xuất sắc!":pct>=75?"Rất tốt!":pct>=60?"Khá tốt!":"Hãy ôn lại từ vựng Food và How much / How many nhé.";
+  const score=document.getElementById("score");
+  score.style.display="block";
+  score.innerHTML=`<strong>${correct}/${quiz.length} · ${pct}%</strong><div>${msg}</div><div style="color:#667085;margin-top:6px">Đã trả lời ${answered}/${quiz.length} câu.</div>`;
+  score.scrollIntoView({behavior:"smooth"});
+}
+
+function resetQuiz(){
+  if(!confirm("Xóa toàn bộ câu trả lời và làm lại?")) return;
+  localStorage.removeItem("msnga_food_quiz_15");
+  render();
+  document.getElementById("score").style.display="none";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+render();
+</script>
+</body>
+</html>

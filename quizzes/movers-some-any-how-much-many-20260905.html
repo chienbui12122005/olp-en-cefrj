@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movers Quiz - Some / Any & How much / How many</title>
+<style>
+:root{--blue:#1f6fb2;--pink:#ff4f87;--yellow:#ffd95a;--green:#69c779;--bg:#f7fbff;--ink:#17324d;--card:#fff;--soft:#eaf6ff;--border:#cfe7f8}
+*{box-sizing:border-box}body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;background:linear-gradient(180deg,#eef9ff,#fff9fb);color:var(--ink)}
+.wrap{max-width:900px;margin:0 auto;padding:20px}.hero{background:#fff;border:3px solid #8bd2ff;border-radius:24px;padding:20px;box-shadow:0 10px 24px rgba(35,100,150,.12);display:flex;gap:18px;align-items:center}
+.hero-emoji{font-size:72px;flex:0 0 auto}h1{margin:0 0 8px;color:#175da0;font-size:clamp(26px,5vw,42px);line-height:1.05}.subtitle{background:#fff3ae;display:inline-block;padding:8px 14px;border-radius:999px;font-weight:800;margin-top:4px}
+.meta{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}.meta input{width:100%;padding:10px 12px;border:2px solid #cfe7f8;border-radius:12px;font-size:16px}.teacher{margin-top:10px;font-weight:700}
+.progress-wrap{margin:18px 0 10px;background:#dcefff;height:14px;border-radius:999px;overflow:hidden}#progress{height:100%;width:0;background:linear-gradient(90deg,#52bd70,#ffd45d,#ff7d9c);transition:.3s}
+.question{margin:18px 0;background:var(--card);border:2px solid var(--border);border-radius:22px;padding:18px;box-shadow:0 6px 16px rgba(40,90,130,.08)}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:12px}.q-num{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:42px;border-radius:13px;background:#ff5b88;color:#fff;font-weight:900;font-size:20px}
+.pic{font-size:44px;line-height:1;filter:drop-shadow(0 2px 1px rgba(0,0,0,.08))}.prompt{font-size:20px;font-weight:800;line-height:1.4;margin-bottom:12px}.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.opt{border:2px solid #d8e9f5;border-radius:14px;padding:12px 14px;background:#fbfdff;cursor:pointer;font-size:17px;transition:.15s;text-align:left}.opt:hover{transform:translateY(-1px);border-color:#8bcdf7}.opt.selected{border-color:#5aaee6;background:#eaf7ff}.opt.correct{border-color:#61bf70;background:#e8f8eb}.opt.wrong{border-color:#f06a7d;background:#ffecef}
+.feedback{margin-top:10px;font-weight:800;min-height:24px}.actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:24px 0 10px}button{border:0;border-radius:14px;padding:14px 20px;font-size:18px;font-weight:900;cursor:pointer}
+#submitBtn{background:#1f7ac0;color:#fff}#resetBtn{background:#ffdc68;color:#5a4200}.result{display:none;margin:24px 0;padding:22px;border-radius:22px;background:#fff;border:3px solid #8fd3ff;text-align:center;box-shadow:0 8px 20px rgba(40,90,130,.1)}
+.score{font-size:48px;font-weight:900;color:#1763a4;margin:8px 0}.badge{display:inline-block;margin-top:8px;padding:8px 14px;border-radius:999px;background:#fff0a8;font-weight:900}.section-title{margin:26px 0 8px;padding:10px 16px;border-radius:16px;color:#164e82;background:#e7f7ff;font-size:23px;font-weight:900;border-left:8px solid #54b9ef}
+.footer{text-align:center;color:#517088;font-size:14px;margin:20px 0 30px}@media(max-width:650px){.hero{align-items:flex-start}.hero-emoji{font-size:52px}.meta{grid-template-columns:1fr}.options{grid-template-columns:1fr}.prompt{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hero"><div class="hero-emoji">🧒📚</div><div><h1>QUIZ MOVERS</h1><div class="subtitle">some / any • How much / How many</div><div class="meta"><input id="studentName" placeholder="Họ và tên học sinh"><input id="className" placeholder="Lớp"></div><div class="teacher">👩‍🏫 Giáo viên hỗ trợ: Ms Nga – 0968 279 952</div></div></div>
+<div class="progress-wrap"><div id="progress"></div></div>
+<div id="quiz"></div>
+<div class="actions"><button id="submitBtn">✅ Nộp bài & chấm điểm</button><button id="resetBtn">🔄 Làm lại</button></div>
+<div class="result" id="result"><div style="font-size:54px">🏆</div><div id="resultName" style="font-size:22px;font-weight:900"></div><div class="score" id="score"></div><div id="message" style="font-size:18px;font-weight:800"></div><div class="badge">Small steps, big progress! 🌟</div></div>
+<div class="footer">Movers Grammar Practice • Ms Nga</div>
+</div>
+<script>
+const sections=[
+{title:"Bài 1 • Chọn some / any",questions:[
+{q:"Is there ______ milk in the fridge?",pic:"🥛🧊",opts:["some","any","many","much"],ans:1},
+{q:"There are ______ apples on the table.",pic:"🍎🍎",opts:["any","much","some","many"],ans:2},
+{q:"She doesn't have ______ bread for breakfast.",pic:"🍞",opts:["some","any","many","a"],ans:1},
+{q:"Do you have ______ grandparents in Hanoi?",pic:"👵👴",opts:["some","much","any","a"],ans:2},
+{q:"My dad bought ______ fresh oranges yesterday.",pic:"🍊🍊",opts:["some","any","much","an"],ans:0},
+{q:"There isn't ______ cheese left on the plate.",pic:"🧀",opts:["some","many","any","a"],ans:2}]},
+{title:"Bài 2 • How much hay How many?",questions:[
+{q:"______ water do you drink every day?",pic:"💧🥤",opts:["How much","How many","How old","How long"],ans:0},
+{q:"______ books are there in your bag?",pic:"📚🎒",opts:["How much","How many","How long","How often"],ans:1},
+{q:"______ chocolate do we need for the cake?",pic:"🍫🎂",opts:["How many","How much","How old","How far"],ans:1},
+{q:"______ eggs are in the basket?",pic:"🥚🧺",opts:["How much","How many","How long","How"],ans:1},
+{q:"______ money do you have?",pic:"💵🪙",opts:["How many","How much","How old","How often"],ans:1},
+{q:"______ students are in your class?",pic:"👧🧒👦",opts:["How much","How many","How long","How far"],ans:1}]},
+{title:"Bài 3 • Chọn câu đúng",questions:[
+{q:"some / sandwiches / there / are / on / the / table",pic:"🥪🥪",opts:["Some sandwiches there are on the table.","There are some sandwiches on the table.","There some sandwiches are on the table.","There are sandwiches some on the table."],ans:1},
+{q:"any / juice / isn't / there / in / the / glass",pic:"🧃",opts:["There isn't any juice in the glass.","There any juice isn't in the glass.","Any juice there isn't in the glass.","There isn't juice any in the glass."],ans:0},
+{q:"much / how / rice / have / you / got",pic:"🍚",opts:["How rice much have you got?","How much have you got rice?","How much rice have you got?","How many rice have you got?"],ans:2},
+{q:"many / presents / are / under / the / tree / how",pic:"🎁🎄",opts:["How much presents are under the tree?","How many presents are under the tree?","How presents many are under the tree?","How many are presents under the tree?"],ans:1}]},
+{title:"Bài 4 • Chọn câu hỏi phù hợp",questions:[
+{q:"There are five bananas on the plate.",pic:"🍌🍌🍌",opts:["How much bananas are on the plate?","How many bananas are on the plate?","How many banana is on the plate?","How much banana is on the plate?"],ans:1},
+{q:"There is a lot of water in the bottle.",pic:"💧🧴",opts:["How many water is in the bottle?","How much waters are in the bottle?","How much water is in the bottle?","How many water are in the bottle?"],ans:2}]}
+];
+const quiz=document.getElementById("quiz");let allQuestions=[];
+sections.forEach(sec=>{const h=document.createElement("div");h.className="section-title";h.textContent=sec.title;quiz.appendChild(h);sec.questions.forEach(q=>{allQuestions.push(q);const idx=allQuestions.length-1;const box=document.createElement("div");box.className="question";box.dataset.index=idx;box.innerHTML=`<div class="q-head"><div class="q-num">${idx+1}</div><div class="pic">${q.pic}</div></div><div class="prompt">${q.q}</div><div class="options">${q.opts.map((o,i)=>`<button class="opt" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join("")}</div><div class="feedback"></div>`;quiz.appendChild(box);});});
+function updateProgress(){const answered=[...document.querySelectorAll(".question")].filter(q=>q.dataset.selected!==undefined).length;document.getElementById("progress").style.width=(answered/allQuestions.length*100)+"%";}
+document.querySelectorAll(".question").forEach(box=>{box.querySelectorAll(".opt").forEach(btn=>{btn.addEventListener("click",()=>{if(box.dataset.graded==="1")return;box.querySelectorAll(".opt").forEach(b=>b.classList.remove("selected"));btn.classList.add("selected");box.dataset.selected=btn.dataset.i;updateProgress();});});});
+document.getElementById("submitBtn").addEventListener("click",()=>{let score=0;document.querySelectorAll(".question").forEach((box,idx)=>{const q=allQuestions[idx];const selected=box.dataset.selected;const fb=box.querySelector(".feedback");box.dataset.graded="1";box.querySelectorAll(".opt").forEach((b,i)=>{b.classList.remove("selected");if(i===q.ans)b.classList.add("correct");if(selected!==undefined&&+selected===i&&i!==q.ans)b.classList.add("wrong");});if(selected===undefined){fb.textContent="⚠️ Chưa trả lời.";fb.style.color="#a66b00";}else if(+selected===q.ans){score++;fb.textContent="✅ Chính xác!";fb.style.color="#27823a";}else{fb.textContent="❌ Chưa đúng. Xem đáp án màu xanh.";fb.style.color="#b43a4a";}});const name=document.getElementById("studentName").value.trim();document.getElementById("resultName").textContent=name?`Kết quả của ${name}`:"Kết quả bài làm";document.getElementById("score").textContent=`${score} / ${allQuestions.length}`;const pct=score/allQuestions.length*100;let msg="";if(pct===100)msg="Xuất sắc! Perfect score! 🌟";else if(pct>=85)msg="Rất tốt! Chỉ cần chú ý thêm một chút. 👏";else if(pct>=70)msg="Khá tốt! Hãy xem lại những câu sai nhé. 💪";else msg="Cố gắng thêm nhé! Làm lại một lần nữa sẽ tốt hơn. 📘";document.getElementById("message").textContent=msg;document.getElementById("result").style.display="block";document.getElementById("progress").style.width="100%";document.getElementById("result").scrollIntoView({behavior:"smooth",block:"center"});});
+document.getElementById("resetBtn").addEventListener("click",()=>{document.querySelectorAll(".question").forEach(box=>{delete box.dataset.selected;delete box.dataset.graded;box.querySelectorAll(".opt").forEach(b=>b.className="opt");box.querySelector(".feedback").textContent="";});document.getElementById("result").style.display="none";document.getElementById("progress").style.width="0%";window.scrollTo({top:0,behavior:"smooth"});});
+</script>
+</body></html>
